@@ -1,19 +1,23 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <locale.h>
+#include <stdio.h>     // Entrada/Salida estándar (printf, fgets, etc.)
+#include <string.h>    // Manejo de cadenas (strcmp, strtok, strlen, etc.)
+#include <stdlib.h>    // Funciones estándar (atoi, malloc, free, etc.)
+#include <locale.h>    // Configuración regional (para soporte de UTF-8 en consola)
 
-#include "process.h"
-#include "memory.h"
-#include "fs.h"
+#include "process.h"   // Módulo de gestión de procesos
+#include "memory.h"    // Módulo de gestión de memoria
+#include "fs.h"        // Módulo de sistema de archivos virtual
 
 #ifdef _WIN32
-#define strcasecmp _stricmp
+#define strcasecmp _stricmp // Compatibilidad con Windows (strcasecmp no existe)
 #endif
 
-#define PROMPT "os> "
-#define VFS_FILE "vfs.dat"
+#define PROMPT "CinnamStrawbOS> " // Prefijo del shell interactivo
+#define VFS_FILE "vfs.dat"        // Nombre del archivo persistente del VFS
 
+// ======================================================
+// 📌 Función: print_ayuda()
+// Muestra el menú de ayuda con todos los comandos soportados
+// ======================================================
 void print_ayuda()
 {
     printf("\n\033[1;37m============================================================\033[0m\n");
@@ -55,17 +59,24 @@ void print_ayuda()
     printf("\n\033[1;37m============================================================\033[0m\n\n");
 }
 
-
+// ======================================================
+// 📌 Función principal: main()
+// Punto de entrada del sistema operativo prototipo
+// Inicializa subsistemas y gestiona el loop interactivo
+// ======================================================
 int main()
 {
-    char line[1024];
-    proc_init();
-    mem_init();
-    fs_init();
-    fs_load(VFS_FILE); // intentar cargar VFS si existe
+    char line[1024];        // Buffer para almacenar la línea de entrada del usuario
 
-    setlocale(LC_ALL, ""); // intentar soporte UTF-8 (no siempre aplica en Windows)
+    // Inicialización de subsistemas
+    proc_init();            // Inicializa gestor de procesos
+    mem_init();             // Inicializa gestor de memoria
+    fs_init();              // Inicializa sistema de archivos
+    fs_load(VFS_FILE);      // Intenta cargar sistema de archivos desde disco
 
+    setlocale(LC_ALL, "");  // Habilita soporte UTF-8 (dependiendo del SO)
+
+    // Mensaje de bienvenida
     printf("============================================================\n");
     printf("       Prototipo Sistema Operativo \"CinnamStrawbOS\"  \n");
     printf("============================================================\n");
@@ -77,19 +88,24 @@ int main()
     printf(" Escribe 'Ayuda' para ver la lista de comandos disponibles.\n");
     printf("============================================================\n\n");
 
+    // Bucle principal del shell
     while (1)
     {
-        printf("%s", PROMPT);
-        if (!fgets(line, sizeof(line), stdin))
+        printf("%s", PROMPT); // Muestra prompt en pantalla
+
+        if (!fgets(line, sizeof(line), stdin)) // Lee comando del usuario
             break;
-        line[strcspn(line, "\n")] = '\0'; // quitar salto de linea
-        if (strlen(line) == 0)
+        line[strcspn(line, "\n")] = '\0';      // Elimina salto de línea final
+        if (strlen(line) == 0)                 // Ignora entradas vacías
             continue;
 
-        char *cmd = strtok(line, " ");
+        char *cmd = strtok(line, " ");         // Extrae primer token (el comando)
         if (!cmd)
             continue;
 
+        // =============================
+        //  Bloque de Procesos
+        // =============================
         if (strcasecmp(cmd, "Ayuda") == 0)
         {
             print_ayuda();
@@ -98,13 +114,12 @@ int main()
         {
             char *name = strtok(NULL, " ");
             char *burst_s = strtok(NULL, " ");
-            if (!name || !burst_s)
-            {
+            if (!name || !burst_s) {
                 printf("Uso: NuevoProceso <name> <burst>\n");
                 continue;
             }
-            int burst = atoi(burst_s);
-            proc_create(name, burst);
+            int burst = atoi(burst_s); // Convierte argumento a número
+            proc_create(name, burst);  // Crea nuevo proceso
         }
         else if (strcasecmp(cmd, "ListarProcesos") == 0)
         {
@@ -113,32 +128,34 @@ int main()
         else if (strcasecmp(cmd, "Ejecutar") == 0)
         {
             char *q = strtok(NULL, " ");
-            int quantum = q ? atoi(q) : 1;
-            proc_scheduler_rr(quantum);
+            int quantum = q ? atoi(q) : 1;   // Quantum por defecto = 1
+            proc_scheduler_rr(quantum);      // Ejecuta planificador RR
         }
         else if (strcasecmp(cmd, "TerminarProceso") == 0)
         {
             char *pid_s = strtok(NULL, " ");
-            if (!pid_s)
-            {
+            if (!pid_s) {
                 printf("Uso: TerminarProceso <pid>\n");
                 continue;
             }
             int pid = atoi(pid_s);
-            proc_kill(pid);
+            proc_kill(pid); // Elimina proceso específico
         }
+
+        // =============================
+        //  Bloque de Memoria
+        // =============================
         else if (strcasecmp(cmd, "AsignarMemoria") == 0)
         {
             char *pid_s = strtok(NULL, " ");
             char *size_s = strtok(NULL, " ");
-            if (!pid_s || !size_s)
-            {
+            if (!pid_s || !size_s) {
                 printf("Uso: AsignarMemoria <pid> <size>\n");
                 continue;
             }
             int pid = atoi(pid_s);
             int size = atoi(size_s);
-            int blk = mem_alloc(pid, size);
+            int blk = mem_alloc(pid, size); // Intenta asignar memoria
             if (blk == -1)
                 printf("[ERROR] Fallo la asignacion de memoria (no hay fit o limite)\n");
             else
@@ -147,13 +164,12 @@ int main()
         else if (strcasecmp(cmd, "LiberarMemoria") == 0)
         {
             char *pid_s = strtok(NULL, " ");
-            if (!pid_s)
-            {
+            if (!pid_s) {
                 printf("Uso: LiberarMemoria <pid>\n");
                 continue;
             }
             int pid = atoi(pid_s);
-            int freed = mem_free_by_owner(pid);
+            int freed = mem_free_by_owner(pid); // Libera memoria del proceso
             if (freed == 0)
                 printf("[WARNING] No se encontraron bloques para PID=%d\n", pid);
             else
@@ -161,13 +177,16 @@ int main()
         }
         else if (strcasecmp(cmd, "MostrarMapaMemoria") == 0)
         {
-            mem_map();
+            mem_map(); // Muestra estado de la memoria
         }
+
+        // =============================
+        //  Bloque de Archivos (VFS)
+        // =============================
         else if (strcasecmp(cmd, "CrearArchivo") == 0)
         {
             char *name = strtok(NULL, " ");
-            if (!name)
-            {
+            if (!name) {
                 printf("Uso: CrearArchivo <name>\n");
                 continue;
             }
@@ -183,8 +202,7 @@ int main()
         else if (strcasecmp(cmd, "MostrarContenido") == 0)
         {
             char *name = strtok(NULL, " ");
-            if (!name)
-            {
+            if (!name) {
                 printf("Uso: MostrarContenido <name>\n");
                 continue;
             }
@@ -197,15 +215,12 @@ int main()
         else if (strcasecmp(cmd, "EscribirArchivo") == 0)
         {
             char *name = strtok(NULL, " ");
-            if (!name)
-            {
+            if (!name) {
                 printf("Uso: EscribirArchivo <name>\n");
                 continue;
             }
-            if (fs_find(name) == -1)
-            { // si no existe, crearlo
-                if (fs_mkfile(name) == -1)
-                {
+            if (fs_find(name) == -1) { // Si no existe, crearlo
+                if (fs_mkfile(name) == -1) {
                     printf("[WARNING] No se pudo crear archivo\n");
                     continue;
                 }
@@ -214,15 +229,14 @@ int main()
             char content[MAX_CONTENT];
             if (!fgets(content, sizeof(content), stdin))
                 content[0] = '\0';
-            content[strcspn(content, "\n")] = '\0';
+            content[strcspn(content, "\n")] = '\0'; // Quita salto de línea
             fs_write(name, content);
             printf("[OK] Contenido escrito en %s\n", name);
         }
         else if (strcasecmp(cmd, "EliminarArchivo") == 0)
         {
             char *name = strtok(NULL, " ");
-            if (!name)
-            {
+            if (!name) {
                 printf("Uso: EliminarArchivo <name>\n");
                 continue;
             }
@@ -245,10 +259,14 @@ int main()
             else
                 printf("[WARNING] Error cargando VFS (existe %s?)\n", VFS_FILE);
         }
+
+        // =============================
+        //  Bloque del Sistema
+        // =============================
         else if (strcasecmp(cmd, "Salir") == 0)
         {
             printf("[INFO] Saliendo...\n");
-            break;
+            break; // Sale del bucle principal → finaliza el programa
         }
         else
         {
@@ -256,5 +274,5 @@ int main()
         }
     }
 
-    return 0;
+    return 0; // Fin del programa
 }
