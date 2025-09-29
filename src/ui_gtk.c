@@ -11,17 +11,25 @@ static GtkWidget *SCROLLED_WIN = NULL; // Ventana con scroll para auto-scroll
 
 /* ---------- Utilidades GUI ---------- */
 
-// Función para enviar texto al terminal de la GUI
+// Función mejorada para enviar texto formateado al terminal de la GUI
 static void gui_sink(const char *text) {
     GtkTextIter end;
     gtk_text_buffer_get_end_iter(BUF, &end);
+
+    // Insertar el texto con mejor formato
     gtk_text_buffer_insert(BUF, &end, text, -1);
 
-    // Auto-scroll hacia abajo cuando se agrega nuevo texto
-    GtkTextMark *mark = gtk_text_buffer_get_insert(BUF);
+    // Auto-scroll hacia abajo de manera más suave
+    GtkTextMark *insert_mark = gtk_text_buffer_get_insert(BUF);
+    gtk_text_buffer_get_end_iter(BUF, &end);
     gtk_text_buffer_place_cursor(BUF, &end);
+
     GtkTextView *text_view = GTK_TEXT_VIEW(gtk_bin_get_child(GTK_BIN(SCROLLED_WIN)));
-    gtk_text_view_scroll_mark_onscreen(text_view, mark);
+    gtk_text_view_scroll_mark_onscreen(text_view, insert_mark);
+
+    // Asegurar que el scroll llegue al final
+    GtkAdjustment *adj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(SCROLLED_WIN));
+    gtk_adjustment_set_value(adj, gtk_adjustment_get_upper(adj) - gtk_adjustment_get_page_size(adj));
 }
 
 // Actualiza el mensaje de la barra de estado
@@ -132,15 +140,22 @@ int main(int argc, char **argv) {
         "    background: rgba(255, 255, 255, 0.2);\n"
         "}\n"
         "\n"
-        "/* Terminal de salida */\n"
+        "/* Terminal de salida con texto negro */\n"
         "#terminal {\n"
-        "    background: rgba(0, 0, 0, 0.4);\n"
-        "    color: #00ff88;\n"
-        "    font-family: 'Consolas', 'Fira Code', monospace;\n"
-        "    font-size: 13px;\n"
-        "    border-radius: 8px;\n"
+        "    background: #ffffff;\n"
+        "    color: #000000;\n"
+        "    font-family: 'Consolas', 'Fira Code', 'SF Mono', monospace;\n"
+        "    font-size: 14px;\n"
+        "    line-height: 1.6;\n"
+        "    border-radius: 12px;\n"
         "    margin: 8px;\n"
-        "    border: 1px solid rgba(255, 255, 255, 0.1);\n"
+        "    border: 1px solid rgba(148, 163, 184, 0.2);\n"
+        "    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);\n"
+        "}\n"
+        "\n"
+        "/* Styling para texto formateado en el terminal */\n"
+        "textview text {\n"
+        "    color: #000000;\n"
         "}\n"
         "\n"
         "/* Campo de entrada elegante */\n"
@@ -312,9 +327,13 @@ int main(int argc, char **argv) {
 
     // Mostrar mensaje de bienvenida en el terminal
     shell_init();
-    gui_sink("\n🌟 ¡Bienvenido a CinnamStrawbOS!\n");
-    gui_sink("✨ Usa los botones de arriba o escribe comandos abajo\n");
-    gui_sink("📖 Escribe 'Ayuda' para ver todos los comandos disponibles\n\n");
+    gui_sink("\n\n╔══════════════════════════════════════════════════════════════╗\n");
+    gui_sink("║                    🍓 INTERFAZ GUI LISTA 🍓                     ║\n");
+    gui_sink("╠══════════════════════════════════════════════════════════════╣\n");
+    gui_sink("║ 🎯 Usa los botones de la barra superior para acciones rápidas      ║\n");
+    gui_sink("║ ⌨️  Escribe comandos en el campo de entrada de abajo            ║\n");
+    gui_sink("║ 📖 Presiona 'Ayuda' para ver todos los comandos disponibles     ║\n");
+    gui_sink("╚══════════════════════════════════════════════════════════════╝\n\n");
 
     // Enfocar el campo de entrada al iniciar
     gtk_widget_grab_focus(ENTRY);

@@ -18,39 +18,35 @@
 // ===== Ayuda con colores (tu misma salida) =====
 static void print_ayuda(void)
 {
-    OUT("\n\033[1;37m============================================================\033[0m\n");
-    OUT("                   \033[1;36mManual de Comandos\033[0m\n");
-    OUT("\033[1;37m============================================================\033[0m\n");
+    OUT("\n");
+    OUT("📚 COMANDOS DISPONIBLES - CinnamStrawbOS\n");
+    OUT("==========================================\n\n");
 
-    OUT("\n\033[1;32m  Gestion de Procesos\033[0m\n");
-    OUT("------------------------------------------------------------\n");
-    OUT(" NuevoProceso <Nombre> <Rafaga>  | Crear proceso (rafaga en unidades)\n");
-    OUT(" ListarProcesos                  | Listar procesos activos\n");
-    OUT(" Ejecutar [Intervalo]            | Ejecutar planificador Round-Robin\n");
-    OUT(" TerminarProceso <Id_Proceso>    | Terminar un proceso especifico\n");
+    OUT("🔶 PROCESOS:\n");
+    OUT("   NuevoProceso <nombre> <rafaga>  ->  Crea un nuevo proceso\n");
+    OUT("   ListarProcesos                  ->  Muestra procesos activos\n");
+    OUT("   Ejecutar [quantum]              ->  Ejecuta planificador Round-Robin\n");
+    OUT("   TerminarProceso <id>            ->  Termina proceso por ID\n\n");
 
-    OUT("\n\033[1;34m  Gestion de Memoria\033[0m\n");
-    OUT("------------------------------------------------------------\n");
-    OUT(" AsignarMemoria <Id_Proceso> <Tamano_Bytes> | Asignar memoria al proceso\n");
-    OUT(" LiberarMemoria <Id_Proceso>                | Liberar memoria del proceso\n");
-    OUT(" MostrarMapaMemoria                         | Mostrar mapa de memoria\n");
+    OUT("💾 MEMORIA:\n");
+    OUT("   AsignarMemoria <id> <bytes>     ->  Asigna memoria a proceso\n");
+    OUT("   LiberarMemoria <id>             ->  Libera memoria de proceso\n");
+    OUT("   MostrarMapaMemoria              ->  Muestra estado de memoria\n\n");
 
-    OUT("\n\033[1;33m  Sistema de Archivos Virtual (VFS)\033[0m\n");
-    OUT("------------------------------------------------------------\n");
-    OUT(" CrearArchivo <Nombre>          | Crear archivo en VFS\n");
-    OUT(" ListarArchivos                 | Listar archivos en VFS\n");
-    OUT(" MostrarContenido <Nombre>      | Mostrar contenido de un archivo\n");
-    OUT(" EscribirArchivo <Nombre> [contenido] | Escribir contenido (en la misma linea)\n");
-    OUT(" EliminarArchivo <Nombre>       | Eliminar archivo del VFS\n");
-    OUT(" GuardarFS                      | Guardar VFS en disco (vfs.dat)\n");
-    OUT(" CargarFS                       | Cargar VFS desde disco (vfs.dat)\n");
+    OUT("📂 ARCHIVOS:\n");
+    OUT("   CrearArchivo <nombre>           ->  Crea archivo en VFS\n");
+    OUT("   ListarArchivos                  ->  Lista archivos del VFS\n");
+    OUT("   MostrarContenido <nombre>       ->  Muestra contenido de archivo\n");
+    OUT("   EscribirArchivo <nombre> [txt]  ->  Escribe en archivo\n");
+    OUT("   EliminarArchivo <nombre>        ->  Elimina archivo\n");
+    OUT("   GuardarFS                       ->  Guarda VFS a disco\n");
+    OUT("   CargarFS                        ->  Carga VFS desde disco\n\n");
 
-    OUT("\n\033[1;35m  Comandos del Sistema\033[0m\n");
-    OUT("------------------------------------------------------------\n");
-    OUT(" Ayuda                          | Mostrar este menu de ayuda\n");
-    OUT(" Salir                          | Salir del sistema\n");
+    OUT("⚙️ SISTEMA:\n");
+    OUT("   Ayuda                           ->  Muestra esta ayuda\n");
+    OUT("   Salir                           ->  Cierra el sistema\n\n");
 
-    OUT("\n\033[1;37m============================================================\033[0m\n\n");
+    OUT("💡 Tip: Usa los botones de arriba para acceso rápido\n\n");
 }
 
 // Inicializa todos los subsistemas del SO y muestra banner de bienvenida
