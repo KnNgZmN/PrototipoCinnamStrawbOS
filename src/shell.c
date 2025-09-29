@@ -53,14 +53,16 @@ static void print_ayuda(void)
     OUT("\n\033[1;37m============================================================\033[0m\n\n");
 }
 
+// Inicializa todos los subsistemas del SO y muestra banner de bienvenida
 void shell_init(void)
 {
-    setlocale(LC_ALL, "");
+    setlocale(LC_ALL, "");  // Soporte para caracteres especiales
 
-    proc_init();
-    mem_init();
-    fs_init();
-    fs_load(VFS_FILE);
+    // Inicializar todos los módulos del sistema operativo
+    proc_init();   // Sistema de gestión de procesos
+    mem_init();    // Administrador de memoria
+    fs_init();     // Sistema de archivos virtual
+    fs_load(VFS_FILE);  // Cargar VFS persistente desde disco
 
     OUT("============================================================\n");
     OUT("       Prototipo Sistema Operativo \"CinnamStrawbOS\"  \n");
@@ -74,13 +76,14 @@ void shell_init(void)
     OUT("============================================================\n\n");
 }
 
+// Procesa una línea de comando completa y ejecuta la acción correspondiente
 int shell_handle_line(char *line)
 {
     if (!line) return 0;
-    line[strcspn(line, "\n")] = '\0';
-    if (!*line) return 0;
+    line[strcspn(line, "\n")] = '\0';  // Eliminar salto de línea
+    if (!*line) return 0;  // Ignorar líneas vacías
 
-    char *cmd = strtok(line, " ");
+    char *cmd = strtok(line, " ");  // Extraer comando principal
     if (!cmd) return 0;
 
     // ===== Procesos =====

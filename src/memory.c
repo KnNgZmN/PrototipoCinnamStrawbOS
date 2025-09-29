@@ -25,10 +25,11 @@ void mem_init() {
 // Función auxiliar: fusiona bloques libres adyacentes
 // para evitar fragmentación externa
 // ======================================================
+// Fusiona bloques de memoria libres adyacentes para reducir fragmentación externa
 static void mem_coalesce() {
     int i = 0;
     while (i < block_count - 1) {
-        if (blocks[i].free && blocks[i+1].free) {
+        if (blocks[i].free && blocks[i+1].free) {  // Dos bloques libres consecutivos
             // Fusionar bloques contiguos
             blocks[i].size += blocks[i+1].size;
 
@@ -51,8 +52,10 @@ static void mem_coalesce() {
 // suficientemente grande y asigna la memoria.
 // Devuelve el índice del bloque asignado o -1 si falla.
 // ======================================================
+// Asigna un bloque de memoria usando el algoritmo First-Fit
+// Busca el primer bloque libre suficientemente grande
 int mem_alloc(int owner, int size) {
-    if (size <= 0 || size > MEM_SIZE) return -1; // Tamaño inválido
+    if (size <= 0 || size > MEM_SIZE) return -1;  // Validar tamaño
 
     for (int i = 0; i < block_count; ++i) {
         if (blocks[i].free && blocks[i].size >= size) {
