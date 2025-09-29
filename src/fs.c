@@ -99,8 +99,9 @@ void fs_ls() {
 
 // Guarda el estado del VFS en un archivo binario en disco
 // Retorna 0 si éxito, -1 si error al abrir/escribir
+// Serializa el VFS completo a un archivo binario en disco para persistencia
 int fs_save(const char *path) {
-    FILE *f = fopen(path, "wb"); // Abre archivo en modo binario escritura
+    FILE *f = fopen(path, "wb");  // Modo binario para preservar estructura
     if (!f) return -1;
 
     // Cuenta cuántos archivos están en uso
@@ -128,8 +129,9 @@ int fs_save(const char *path) {
 
 // Carga el estado del VFS desde un archivo en disco
 // Retorna 0 si éxito, -1 si error
+// Deserializa el VFS desde un archivo binario, restaurando estado anterior
 int fs_load(const char *path) {
-    FILE *f = fopen(path, "rb"); // Abre en lectura binaria
+    FILE *f = fopen(path, "rb");  // Modo binario para leer estructura
     if (!f) return -1;
 
     // Limpia las entradas actuales

@@ -1,0 +1,37 @@
+# Ejecutables compilados
+*.exe
+*.o
+*.obj
+
+# Archivos temporales de compilación
+*.tmp
+*.temp
+
+# Archivos de sistema de Windows
+Thumbs.db
+Desktop.ini
+
+# Archivos de VS Code (excepto configuración del proyecto)
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.log
+
+
+
+# Archivos de datos temporales
+*.log
+*.bak
+*.swp
+*.swo
+
+# Archivos de depuración
+*.pdb
+*.ilk
+
+# Archivos de configuración personal que no deben compartirse
+config.local
+*.local
+
+# Cache y archivos temporales del sistema
+.DS_Store
+*~
