@@ -16,8 +16,7 @@ Desktop.ini
 .vscode/tasks.json
 .vscode/*.log
 
-# Carpeta temporal de Claude Code (no necesaria para el proyecto)
-.claude/
+
 
 # Archivos de datos temporales
 *.log
