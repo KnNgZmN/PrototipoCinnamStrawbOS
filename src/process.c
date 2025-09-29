@@ -2,6 +2,7 @@
 #include <string.h>     // Para strncpy (copiar nombre del proceso)
 #include <unistd.h>     // Para sleep() (simulación de tiempo en scheduler)
 #include "process.h"    // Cabecera con definición de Proc, MAX_PROCS, etc.
+#include "log.h"       // Módulo de logging
 
 // ======================================================
 // 📌 Variables globales
@@ -29,7 +30,7 @@ void proc_init() {
 // ======================================================
 int proc_create(const char *name, int burst) {
     if (next_id >= MAX_PROCS) {
-        printf("[WARNING] Limite de procesos alcanzado (%d)\n", MAX_PROCS);
+        Mostrar("[WARNING] Limite de procesos alcanzado (%d)\n", MAX_PROCS);
         return -1; // No hay espacio
     }
 
@@ -41,7 +42,7 @@ int proc_create(const char *name, int burst) {
     procs[idx].alive = 1;           // Activo
     procs[idx].mem_owner_id = -1;   // Aún sin memoria asignada
 
-    printf("[OK] Proceso creado: ID=%d, name=%s, burst=%d\n",
+    Mostrar("[OK] Proceso creado: ID=%d, name=%s, burst=%d\n",
            idx, procs[idx].name, burst);
 
     return idx;
@@ -52,10 +53,10 @@ int proc_create(const char *name, int burst) {
 // Lista todos los procesos con sus atributos principales
 // ======================================================
 void proc_list() {
-    printf("ID\tName\tBurst\tRemaining\tAlive\tMemOwner\n");
+    Mostrar("ID\tName\tBurst\tRemaining\tAlive\tMemOwner\n");
     for (int i = 0; i < next_id; ++i) {
         if (procs[i].id != -1) {
-            printf("%d\t%s\t%d\t%d\t\t%d\t%d\n",
+            Mostrar("%d\t%s\t%d\t%d\t\t%d\t%d\n",
                 procs[i].id,
                 procs[i].name,
                 procs[i].burst,
@@ -88,7 +89,7 @@ int proc_kill(int id) {
 
     procs[id].alive = 0;      // Marcamos como muerto
     procs[id].remaining = 0;  // Ya no tiene CPU por ejecutar
-    printf("[INFO] Proceso ID=%d terminado por peticion\n", id);
+    Mostrar("[INFO] Proceso ID=%d terminado por peticion\n", id);
 
     return 0;
 }
@@ -101,7 +102,7 @@ int proc_kill(int id) {
 void proc_scheduler_rr(int quantum) {
     if (quantum <= 0) quantum = 1; // Quantum mínimo = 1
 
-    printf("\n[INFO] Iniciando scheduler Round-Robin (quantum=%d unidades)\n", quantum);
+    Mostrar("\n[INFO] Iniciando scheduler Round-Robin (quantum=%d unidades)\n", quantum);
 
     int remaining_procs = proc_count();
 
@@ -114,14 +115,14 @@ void proc_scheduler_rr(int quantum) {
             // Determinar cuánto ejecuta este proceso
             int exec = (procs[i].remaining > quantum) ? quantum : procs[i].remaining;
 
-            printf("[OK] Ejecutando PID=%d (%s) por %d unidad(es). Restante: %d\n",
+            Mostrar("[OK] Ejecutando PID=%d (%s) por %d unidad(es). Restante: %d\n",
                    procs[i].id, procs[i].name, exec, procs[i].remaining);
 
             // Simular ejecución en intervalos de 1 segundo
             for (int t = 0; t < exec; ++t) {
                 sleep(1); // Simula uso de CPU
                 procs[i].remaining -= 1; // Reducir tiempo restante
-                printf("   [OK] PID=%d: ejecutado 1 unidad, resta %d\n",
+                Mostrar("   [OK] PID=%d: ejecutado 1 unidad, resta %d\n",
                        procs[i].id, procs[i].remaining);
 
                 if (procs[i].remaining <= 0) break; // Terminó el proceso
@@ -130,7 +131,7 @@ void proc_scheduler_rr(int quantum) {
             // Si terminó durante este quantum → marcar como finalizado
             if (procs[i].remaining <= 0) {
                 procs[i].alive = 0;
-                printf("[INFO] PID=%d (%s) finalizado\n", procs[i].id, procs[i].name);
+                Mostrar("[INFO] PID=%d (%s) finalizado\n", procs[i].id, procs[i].name);
             }
         }
 
@@ -138,5 +139,5 @@ void proc_scheduler_rr(int quantum) {
         remaining_procs = proc_count();
     }
 
-    printf("[INFO] Scheduler finalizado. No quedan procesos listos.\n\n");
+    Mostrar("[INFO] Scheduler finalizado. No quedan procesos listos.\n\n");
 }

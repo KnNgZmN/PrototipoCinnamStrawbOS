@@ -10,6 +10,8 @@ void set_output(out_sink_fn fn);
 void set_output_mode(log_mode_t mode);  // NUEVO
 void outf(const char *fmt, ...);
 
-#define OUT(...) outf(__VA_ARGS__)
+#define Mostrar(...) outf(__VA_ARGS__)
+
+
 #endif
 

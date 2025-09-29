@@ -22,10 +22,6 @@ all: $(CIN_CLI) $(CIN_GUI)
 $(CIN_CLI): $(SRC_CORE) $(SRC_SHELL) $(SRC_CLI)
 	$(CC) $(CFLAGS) -o $@ $^
 
-# Elige UNA de estas dos líneas:
-# (1) con consola visible (útil para depurar)
-#	$(CC) $(CFLAGS) $(GTK_CFLAGS) -o $@ $^ $(GTK_LIBS)
-# (2) sin consola (app “solo GUI”)  ← recomendada
 $(CIN_GUI): $(SRC_CORE) $(SRC_SHELL) $(SRC_GUI)
 	$(CC) $(CFLAGS) -mwindows $(GTK_CFLAGS) -o $@ $^ $(GTK_LIBS)
 

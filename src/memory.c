@@ -1,6 +1,7 @@
 #include <stdio.h>      // Para printf (mostrar mapa de memoria)
 #include <string.h>     // (No se usa directamente aquí, pero puede quedar para extensiones)
 #include "memory.h"     // Cabecera que define MemBlock, MEM_SIZE, MAX_BLOCKS, etc.
+#include "log.h"       // Módulo de logging
 
 // ======================================================
 // 📌 Variables globales
@@ -118,10 +119,10 @@ int mem_free_by_owner(int owner) {
 // tamaño, si está libre y el PID dueño.
 // ======================================================
 void mem_map() {
-    printf("Mapa de memoria (total %d bytes):\n", MEM_SIZE);
-    printf("Idx\tStart\tSize\tFree\tOwner\n");
+    Mostrar("Mapa de memoria (total %d bytes):\n", MEM_SIZE);
+    Mostrar("Idx\tStart\tSize\tFree\tOwner\n");
     for (int i = 0; i < block_count; ++i) {
-        printf("%d\t%d\t%d\t%d\t%d\n",
+        Mostrar("%d\t%d\t%d\t%d\t%d\n",
                i,
                blocks[i].start,
                blocks[i].size,

@@ -2,6 +2,7 @@
 #include <string.h>    // Manejo de cadenas (strcmp, strncpy, strlen, memset...)
 #include <stdlib.h>    // Funciones estándar (malloc, free, atoi...)
 #include "fs.h"        // Header propio con definiciones de constantes y prototipos
+#include "log.h"       // Módulo de logging
 
 // ===============================
 // Definición de estructuras
@@ -74,7 +75,8 @@ int fs_mkfile(const char *name) {
 int fs_write(const char *name, const char *content) {
     int idx = fs_find(name);
     if (idx == -1) return -1; // Archivo no encontrado
-    strncpy(files[idx].content, content, MAX_CONTENT-1);
+    strncpy(files[idx].content, content, MAX_CONTENT - 1);
+    files[idx].content[MAX_CONTENT - 1] = '\0';  // Asegurar terminador
     return 0;
 }
 
@@ -89,10 +91,10 @@ int fs_read(const char *name, char *outbuf, int maxlen) {
 
 // Lista todos los archivos almacenados en el VFS
 void fs_ls() {
-    printf("Archivos en VFS (Sistema de Archivos Virtual):\n");
+    Mostrar("Archivos en VFS (Sistema de Archivos Virtual):\n");
     for (int i = 0; i < MAX_FILES; ++i) {
         if (files[i].used) {
-            printf(" - %s (len=%zu)\n", files[i].name, strlen(files[i].content));
+            Mostrar(" - %s (len=%zu)\n", files[i].name, strlen(files[i].content));
         }
     }
 }

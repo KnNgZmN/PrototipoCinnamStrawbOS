@@ -276,12 +276,21 @@ int main(int argc, char **argv) {
 
     GtkWidget *tv = gtk_text_view_new();
     gtk_text_view_set_editable(GTK_TEXT_VIEW(tv), FALSE);
-    gtk_text_view_set_monospace(GTK_TEXT_VIEW(tv), TRUE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(tv), FALSE);
     gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(tv), GTK_WRAP_WORD_CHAR);
     gtk_text_view_set_left_margin(GTK_TEXT_VIEW(tv), 15);
     gtk_text_view_set_right_margin(GTK_TEXT_VIEW(tv), 15);
     gtk_text_view_set_top_margin(GTK_TEXT_VIEW(tv), 15);
     gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(tv), 15);
+
+    // 👉 Forzar fuente monoespaciada
+    PangoFontDescription *font_desc = pango_font_description_from_string("Monospace 12");
+    gtk_widget_override_font(tv, font_desc);
+    pango_font_description_free(font_desc);
+
+    gtk_container_add(GTK_CONTAINER(SCROLLED_WIN), tv);
+    gtk_box_pack_start(GTK_BOX(root), SCROLLED_WIN, TRUE, TRUE, 0);
+    BUF = gtk_text_view_get_buffer(GTK_TEXT_VIEW(tv));
 
     gtk_container_add(GTK_CONTAINER(SCROLLED_WIN), tv);
     gtk_box_pack_start(GTK_BOX(root), SCROLLED_WIN, TRUE, TRUE, 0);
@@ -325,21 +334,25 @@ int main(int argc, char **argv) {
     set_output(gui_sink);
     set_output_mode(LOG_MODE_GUI);
 
-    // Mostrar mensaje de bienvenida en el terminal
+    // Mostrar mensaje de bienvenida en la interfaz GUI
     shell_init();
-    gui_sink("\n\n╔══════════════════════════════════════════════════════════════╗\n");
-    gui_sink("║                    🍓 INTERFAZ GUI LISTA 🍓                     ║\n");
+    gui_sink("\n\n");
+    gui_sink("╔══════════════════════════════════════════════════════════════╗\n");
+    gui_sink("║                                                              ║\n");
+    gui_sink("║                   🍓  INTERFAZ GUI LISTA  🍓                  ║\n");
+    gui_sink("║                                                              ║\n");
     gui_sink("╠══════════════════════════════════════════════════════════════╣\n");
-    gui_sink("║ 🎯 Usa los botones de la barra superior para acciones rápidas      ║\n");
-    gui_sink("║ ⌨️  Escribe comandos en el campo de entrada de abajo            ║\n");
-    gui_sink("║ 📖 Presiona 'Ayuda' para ver todos los comandos disponibles     ║\n");
+    gui_sink("║  🎯  Usa los botones de la barra superior para acciones rápidas   ║\n");
+    gui_sink("║  ⌨️   Escribe comandos en el campo de entrada inferior           ║\n");
+    gui_sink("║  📖  Presiona 'Ayuda' para ver la lista completa de comandos     ║\n");
     gui_sink("╚══════════════════════════════════════════════════════════════╝\n\n");
+
 
     // Enfocar el campo de entrada al iniciar
     gtk_widget_grab_focus(ENTRY);
 
     gtk_widget_show_all(win);
     gtk_main();
-    return 0;
+    return 0;    
 }
 

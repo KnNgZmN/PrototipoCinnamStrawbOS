@@ -3,6 +3,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+
+
 static out_sink_fn SINK = NULL;
 static log_mode_t MODE = LOG_MODE_CLI;
 
